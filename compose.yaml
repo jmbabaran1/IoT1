@@ -1,0 +1,47 @@
+services:
+  webapp:
+    container_name: rest_api_compose
+    build: ./SSL-IoT1-REST
+    ports: 
+      - ""
+    environment:
+      - HOST_PORT=
+      - DATABASE_IP=
+      - DATABASE_PORT=
+      - DATABASE_USERNAME=
+      - DATABASE_PASSWORD=
+      - DATABASE_NAME=
+      - MQTT_IP=
+      - MQTT_PORT=
+      - MQTT_CLIENT_ID=
+      - MQTT_USERNAME=
+      - MQTT_PASSWORD=
+      - MQTT_RECONNECT_PERIOD=
+      - HOME_ASSISTANT_URL=
+      - HOME_ASSISTANT_PORT=
+      - HOME_ASSISTANT_TOKEN=
+
+  web:
+    build: ./Smart-iLab_DigitalTwin
+    container_name: digital_twin_compose
+    ports: 
+      - ""
+
+  backend:
+    container_name: python_to_db_compose
+    build: ./Smart-iLAB-Python-Files
+    environment:
+      - DATABASE_IP=
+      - DATABASE_PORT=
+      - DATABASE_USERNAME=
+      - DATABASE_PASSWORD=
+      - DATABASE_NAME=
+      - MQTT_IP=
+      - MQTT_PORT=
+      - MQTT_CLIENT_ID=
+      - MQTT_USERNAME=
+      - MQTT_PASSWORD=
+      - MQTT_RECONNECT_PERIOD=
+      - HOME_ASSISTANT_URL=
+      - HOME_ASSISTANT_PORT=
+      - HOME_ASSISTANT_TOKEN=
