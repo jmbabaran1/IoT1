@@ -1,0 +1,742 @@
+body {
+  margin: 0;
+}
+
+/* Only Testing Camera */
+#CAM_TEST {
+  display:block;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin: 10px;
+  padding: 10px;
+
+ }
+
+#CONTROLS {
+  display:block;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 10px;
+  padding: 10px;
+
+}
+
+/* Tools div Style Properties */
+#tools {
+	display: flex;
+  flex-direction: column;
+  font-family: Lexend;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  margin: 10px;
+  padding: 10px;
+}
+
+#tools_top {
+  margin-bottom: 30px;
+}
+
+/* Button Style Properties */
+/* From Uiverse.io by WhiteNervosa */ 
+.button {
+  background-color: #494949;
+  padding: 5px 10px;
+  font-size: 18px;
+  color: rgba(255, 255, 255, 1);
+  cursor: pointer;
+  width: 12em;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  touch-action: none;
+  position: relative;
+  border: none;
+  transition-property: box-shadow, background-color;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: rgba(0, 0, 0, 0.26) 0px -4px 1px 0px inset, rgba(255, 255, 255, 0.17) 0px -1px 1px 0px, rgba(0, 0, 0, 0.15) 0px 3px 6px 2px;
+}
+
+#rst_cam_btn {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+#top_cam_btn {
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.button:hover {
+  background-color: #202020;
+  box-shadow: rgba(0, 0, 0, 0.26) 0px -4px 1px 0px inset, rgba(255, 255, 255, 0.17) 0px -1px 1px 0px, rgba(0, 0, 0, 0.15) 0px 3px 6px 2px;
+}
+
+.button:active {
+  box-shadow: inset 0px 2px 0px 1px rgb(0 0 0 / 29%), inset 0px -1px 0px 0px rgb(230 230 230 / 7%);
+}
+
+.button .inner {
+  font-size: 18px;
+  font-weight: 900;
+  user-select: none;
+  pointer-events: none;
+  transform: translateY(0px) scale(1) translate3d(0, 0, 0);
+  transition-property: transform;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.button:active .inner {
+  transform: translateY(1px) scale(0.98) translate3d(0, 0, 0);
+}
+
+
+
+/* Labels Styling */
+.label {
+  font-family: Lexend;
+  font-size: xx-small;
+  color: #202020;
+  background-color: #f8f8fd;
+  padding: 0.4em 0.8em;
+  border-radius: 50em;
+  border: 3px solid #494949;
+  box-shadow: 0px 0px;
+}
+
+.sensibo_label {
+  font-family: Lexend;
+  font-size: xx-small;
+  color: #84c7d3;
+  background-color: #f8f8fd;
+  padding: 0.4em 0.8em;
+  border-radius: 50em;
+  border: 3px solid #5cb5c5;
+  box-shadow: 0px 0px;
+  opacity: 50%;
+}
+
+.AG1_label {
+  font-family: Lexend;
+  font-size: x-small;
+  color: #202020;
+  background-color: #f8f8fd;
+  padding: 0.4em 0.8em;
+  border-radius: 2em;
+  border: 3px solid #494949;
+  box-shadow: 0px 0px;
+  opacity: 50%;
+  text-align: center;
+}
+
+/* Checkbox Styling */
+/* From Uiverse.io by WhiteNervosa */ 
+.customCheckBoxHolder {
+  margin-top: 14.5px;
+  margin-bottom: 14.5px;
+  display: flex;
+}
+
+.customCheckBox {
+  width: 12.5em;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 8px;
+  background-color: rgba(0, 0, 0, 0.16);
+  border-radius: 0px;
+  color: rgba(255, 255, 255, 0.7);
+  transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition-duration: 300ms;
+  transition-property: color, background-color, box-shadow;
+  display: flex;
+  height: 32px;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 1px 0px inset, rgba(255, 255, 255, 0.17) 0px 1px 1px 0px;
+  outline: none;
+  justify-content: center;
+  min-width: 65px;
+}
+
+.customCheckBox:hover {
+  background-color: #2c2c2c;
+  color: white;
+  box-shadow: rgba(0, 0, 0, 0.23) 0px -4px 1px 0px inset, rgba(255, 255, 255, 0.17) 0px -1px 1px 0px, rgba(0, 0, 0, 0.17) 0px 2px 4px 1px;
+}
+
+.customCheckBox .inner {
+  font-size: 14px;
+  font-weight: 900;
+  pointer-events: none;
+  transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition-duration: 300ms;
+  transition-property: transform;
+  transform: translateY(0px);
+}
+
+.customCheckBox:hover .inner {
+  transform: translateY(-2px);
+}
+
+/* Multiple Checkboxes can be chained together for a radio input */
+.customCheckBoxWrapper:first-of-type .customCheckBox {
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+  border-right: 0px;
+}
+
+.customCheckBoxWrapper:last-of-type .customCheckBox {
+  border-bottom-right-radius: 5px;
+  border-top-right-radius: 5px;
+  border-left: 0px;
+}
+
+.customCheckBoxInput {
+  display: none;
+}
+
+.customCheckBoxInput:checked + .customCheckBoxWrapper .customCheckBox {
+  background-color: #494949;
+  color: white;
+  box-shadow: rgba(0, 0, 0, 0.23) 0px -4px 1px 0px inset, rgba(255, 255, 255, 0.17) 0px -1px 1px 0px, rgba(0, 0, 0, 0.17) 0px 2px 4px 1px;
+}
+
+.customCheckBoxInput:checked + .customCheckBoxWrapper .customCheckBox .inner {
+  transform: translateY(-2px);
+}
+
+.customCheckBoxInput:checked + .customCheckBoxWrapper .customCheckBox:hover {
+  background-color: #202020;
+  box-shadow: rgba(0, 0, 0, 0.26) 0px -4px 1px 0px inset, rgba(255, 255, 255, 0.17) 0px -1px 1px 0px, rgba(0, 0, 0, 0.15) 0px 3px 6px 2px;
+}
+
+.customCheckBoxWrapper .customCheckBox:hover .inner {
+  transform: translateY(-2px);
+}
+
+/* From Uiverse.io by mrhyddenn */ 
+/* The switch - the box around the slider */
+.switch {
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  width: 62px;
+  height: 35px;
+ }
+ 
+ /* Hide default HTML checkbox */
+ .switch input {
+  opacity: 1;
+  width: 0;
+  height: 0;
+ }
+ 
+ /* The slider */
+ .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0px;
+  background: #fff;
+  transition: .4s;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+ }
+ 
+ .slider:before {
+  position: absolute;
+  content: "";
+  height: 1.9em;
+  width: 1.9em;
+  border-radius: 16px;
+  left: 1.2px;
+  top: 0;
+  bottom: 0;
+  background-color: white;
+  box-shadow: 0 2px 5px #999999;
+  transition: .4s;
+ }
+ 
+ input:checked + .slider {
+  background-color: #5fdd54;
+  border: 1px solid transparent;
+ }
+ 
+ input:checked + .slider:before {
+  transform: translateX(1.5em);
+ }
+
+/* Sign in Styling */
+.card__holder{
+  background-color: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  position: fixed;
+  top: 0;       /* Fill the entire screen */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.5s ease-in;
+}
+
+.card {
+  width: 240px;
+  height: 300px;
+  padding: 0 15px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-direction: column;
+  gap: 12px;
+  background: #fff;
+  border-radius: 20px;
+  font-family: Lexend;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  translate: -135px -200px;
+}
+
+.card > * {
+  margin: 0;
+}
+
+.card__title {
+  font-size: 23px;
+  font-weight: 900;
+  color: #333;
+}
+
+.card__content {
+  font-size: 13px;
+  line-height: 18px;
+  color: #333;
+}
+
+.card__form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.card__form input {
+  margin-top: 10px;
+  outline: 0;
+  background: rgb(255, 255, 255);
+  box-shadow: transparent 0px 0px 0px 1px inset;
+  padding: 0.6em;
+  border-radius: 14px;
+  border: 1px solid #333;
+  color: black;
+}
+
+.card__form button {
+  border: 0;
+  background: #111;
+  color: #fff;
+  padding: 0.68em;
+  border-radius: 14px;
+  font-weight: bold;
+}
+
+.sign-up:hover {
+  opacity: 0.8;
+  cursor: pointer;
+} 
+
+
+/* Pop-up (modal) Styling */
+.modal {  /* The entire screen */
+  background-color: rgba(0, 0, 0, 0.3);
+  position: fixed;
+  top: 0;       /* Fill the entire screen */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  transition: all 0.3s ease-in;
+  opacity: 0;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.open { /* for when the dashboard is open */
+  opacity: 1;
+  z-index: 100;
+}
+
+.modal-inner {  /* Just the window inside, dashboard itself */
+  background-color: rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0 , 0, 0.5);
+  text-align: center;
+  width: 75%;
+  height: 75%;
+}
+
+/* Dashboard Header */
+#dash_header {
+  width: 100%;
+  height: fit-content;
+  background-color: rgba(200, 200, 200, 0.50);
+  display: flex;
+  align-items: center; /* Align items vertically in the center */
+  justify-content: space-between; /* Space items evenly */
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+#dash_header h2, #dash_header p, #dash_header button{
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+#dash_header h2 {
+  background-color: rgb(30, 30, 30);
+  border-radius: 10px;
+  padding: 5px 10px;
+  font-family: Lexend;
+  font-size: medium;
+  color: white;
+}
+
+#dash_header p{
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-size: small;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+#dash_header button{
+  font-family: Lexend;
+  background-color: #af3131;
+  padding: 5px 5px;
+  margin-right: 10px;
+  font-size: small;
+  color: rgba(255, 255, 255, 1);
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  touch-action: none;
+  position: relative;
+  border-radius: 8px;
+  transition-property: box-shadow, background-color;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: rgba(0, 0, 0, 0.26) 0px -2px 1px 0px inset, rgba(255, 255, 255, 0.17) 0px -1px 1px 0px, rgba(0, 0, 0, 0.15) 0px 3px 6px 2px;
+}
+
+#dash_header button:hover {
+  background-color: #490e0e;
+  box-shadow: rgba(0, 0, 0, 0.26) 0px -4px 1px 0px inset, rgba(255, 255, 255, 0.17) 0px -1px 1px 0px, rgba(0, 0, 0, 0.15) 0px 3px 6px 2px;
+}
+
+#dash_header button:active {
+  box-shadow: inset 0px 2px 0px 1px rgb(0 0 0 / 29%), inset 0px -1px 0px 0px rgb(230 230 230 / 7%);
+}
+
+#download_data:hover{
+  cursor:pointer;
+}
+
+#download_data:hover p{
+  color: rgba(69, 177, 139, 0.986);
+}
+
+/* Dashboard body */
+#dash_body_header {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  align-items: center; /* Align items vertically in the center */
+  justify-content: space-between; /* Space items evenly */
+}
+
+.sensor_type_id {
+  width: 25%;
+  height: fit-content;
+}
+
+.sensor_header {
+  display: flex;
+  margin-top: 0;
+  align-items: center; /* Align items vertically in the center */
+  justify-content: center; /* Space items evenly */
+  color: white;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: small;
+}
+
+#dash_body_header h3{
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  font-family: Lexend;
+  font-size: medium;
+}
+
+#output_data{
+  width: 100%;
+  height: 85%;
+  display: flex;
+  justify-content: space-between; /* Space items evenly */
+  overflow-y: hidden;
+}
+
+/* Check JavaScript code for this element */
+.download_label{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: white;
+}
+
+.sensor_data {
+  width:25%;
+  overflow-y: auto;
+  padding-left: 5px;
+  padding-right: 5px;
+  -ms-overflow-style: none;  /* Hide in IE and Edge */
+  scrollbar-width: none;  /* Hide in Firefox */
+}
+
+/* Hide scrollbar in Safari, Chrome and Opera */
+.sensor_data::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* Careful with changing this, these elements are added via JS innerHTML */
+.key-value {
+  display: flex;
+  align-items: center; /* Align items vertically in the center */
+  justify-content: space-between; /* Space items evenly */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-justify: inter-word;
+  background-color: rgba(200, 200, 200, 0.5);
+  border-radius: 3px;
+  margin-top: 2px;
+  margin-left: 5px;
+  margin-right: 5px;
+  transition-duration: 100ms;
+  transition-property: background-color;
+}
+
+.key-value:hover {
+  background-color: rgb(165, 165, 165);
+}
+
+.key {
+  margin-left: 10px;
+  margin-right: 10px;
+  font-weight: bold;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  color: rgb(20, 20, 20);
+}
+
+.value {
+  margin-top: 3px;
+  margin-bottom: 3px;
+  margin-right: 10px;
+  text-align: end;
+  color: rgb(20, 20, 20);
+}
+
+/* Download Data View */
+.input_div{
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content:space-around;
+  width: 100%; /* Adjust as needed */
+}
+
+.download_label{
+  color: rgba(255, 255, 255, 0.733);
+  margin-left: 30%;
+}
+
+.date_select, #select_device {
+  margin-right: 30%;
+  border: none;
+  outline: none;
+  border-radius: 15px;
+  padding: 1em;
+  background-color: #f7f7f7;
+  box-shadow: inset 2px 5px 10px rgba(0,0,0,0.3);
+  transition: 300ms ease-in-out;
+}
+
+#download_button {
+  color: white;
+  background-color: #3a834c;
+  width: 100px;
+  height: 30px;
+  border-radius: 6px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#download_button:hover{
+  cursor: pointer;
+  background-color: #17682b;
+}
+
+/* Chart JS CSS */
+#chart_div {
+  position: absolute;
+  right: 8%;
+  bottom: 10%;
+  width: 40%;
+  height: 40%;
+  background-color: rgba(29, 29, 29, 0.5);
+  border-radius: 4px;
+}
+
+/* Aircon Modal CSS */
+.aircon_modal {
+  position: absolute;
+  bottom: 0%;
+  top: 60%;
+  left: 40%;
+  width: 20%;
+  height: 40%;
+  background-color: rgb(218, 218, 218);
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+  box-shadow: 0px 0px 30px 2px rgb(10, 10, 10);
+  transition: all 0.2s ease-in;
+
+  display: flex; /* Enable flexbox */
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center items horizontally */
+  justify-content: center; /* Center items vertically */
+  gap: 15px; /* Space between elements */
+
+  /* Initially Hidden */
+  opacity: 0;
+  z-index: -1;
+}
+
+.aircon_modal.open {
+  opacity: 1;
+  z-index: 100;
+}
+
+#remote_screen {
+  width: 80%;
+  height: 50%;
+  background-color: rgb(123, 199, 218);
+  border-radius: 20px;
+  border: 10px solid #202020;
+  box-shadow: 0 0 3px 1px #3f3f3f inset;
+  top: 5%;
+}
+
+.ac_remote_btn {
+  width: 75%;
+  font: inherit;
+  background-color: #ffffff;
+  border: 0;
+  border-radius: 0.5em;
+  font-size: 1.35rem;
+  padding: 0.375em 1em;
+  font-weight: 600;
+  text-shadow: 0 0.0625em 0 #fff;
+  box-shadow: inset 0 0.0625em 0 0 #f4f4f4, 0 0.0625em 0 0 #efefef,
+    0 0.125em 0 0 #ececec, 0 0.25em 0 0 #e0e0e0, 0 0.3125em 0 0 #dedede,
+    0 0.375em 0 0 #dcdcdc, 0 0.425em 0 0 #cacaca, 0 0.425em 0.5em 0 #cecece;
+  transition: 0.15s ease;
+  cursor: pointer;
+}
+
+.ac_remote_btn:active{
+  translate: 0 0.225em;
+  box-shadow: inset 0 0.03em 0 0 #f4f4f4, 0 0.03em 0 0 #efefef,
+    0 0.0625em 0 0 #ececec, 0 0.125em 0 0 #e0e0e0, 0 0.125em 0 0 #dedede,
+    0 0.2em 0 0 #dcdcdc, 0 0.225em 0 0 #cacaca, 0 0.225em 0.375em 0 #cecece;
+}
+
+
+#remote_buttons {
+  width: 100%;
+  display: flex; /* Enable flexbox */
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center items horizontally */
+  justify-content: center; /* Center items vertically */
+  gap: 5 px; /* Space between elements */
+  font-family: Lexend;
+}
+
+#remote_hvac_mode {
+  width: 100%;
+  display: flex; /* Enable flexbox */
+  flex-direction: row; /* Stack items horizontally */
+  align-items: center; /* Center items horizontally */
+  justify-content: center; /* Center items vertically */
+  gap: 15px; /* Space between elements */
+  font-family: "Roboto Condensed", sans-serif;
+  font-size: small;
+  top: 10%;
+  margin-bottom: 5%;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); /* Dark glow effect */
+}
+
+.remote_hvac_mode_btn {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+}
+
+#remote_temperature {
+  display: flex; /* Makes children appear in a row */
+  align-items: center; /* Vertically aligns items */
+  justify-content: center; /* Horizontally centers content */
+  gap: 10px; /* Space between number and buttons */
+  flex: content;
+  font-family: "Roboto Condensed", sans-serif;
+  text-shadow: 1px 2px 1px rgba(0, 0, 0, 0.5); /* Dark glow effect */
+}
+
+#remote_temperature_display {
+  white-space: nowrap; /* Prevents wrapping */
+  font-size: 52px; /* Adjust as needed */
+  width: 60%;
+  text-align: center;
+}
+
+#remote_temp_buttons {
+  display: flex;
+  flex-direction: column; /* Stack buttons vertically */
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: auto; /* Ensures it doesn’t take full width */
+}
+
+.remote_temp_btn {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+}

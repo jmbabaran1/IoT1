@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart-iLab Project</title>
+    <link rel="icon" type="image/x-icon" href="/assets/icons/SSL-Icon.png">
+    <link rel="stylesheet" type="text/css" href="/src/style.css">
+    <script>
+    (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()</script>
+    <!--GSAP for smooth transitions-->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+    <!--Chartjs for graphical representation of data-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="importmap">
+			{
+				"imports": {
+					"three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js",
+          "jsm/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/",
+          "chart/": "https://cdn.jsdelivr.net/npm/chart.js/"
+        }
+			}
+		</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+  <body id="the_body">
+
+    <div class="card__holder" id="login_screen">
+      <div class="card">
+        <span class="card__title">Insert API Key</span>
+        <p class="card__content">The API Key is used for controlling devices through the Digital Twin.
+        </p>
+        <div class="card__form">
+            <input type="password" placeholder="Your API Key" type="text" id="key_input">
+            <div style="width: 80%; gap: 5%; display: flex; flex-direction: column; justify-content: space-around; align-content: space-between; gap: 2px;">
+              <button class="sign-up" id="enter_with_key" style="background-color: #137735">Enter with Key</button>
+              <button class="sign-up" id="enter_no_key" style="background-color: #9e9334">Enter without Key</button>
+            </div>
+        </div>
+        <p id="login_error_text" style="color: #b32a15; font-size: smaller; margin-bottom: 5px;"></p>
+      </div>
+    </div>
+
+
+    <!--
+      <script type="module" src="/src/sphere_and_cube.js"></script>
+    -->
+
+    <div class="modal" id="modal">
+      <!-- Dashboard itself -->
+      <div class="modal-inner">
+        <div id="dash_header">
+          <h2 id="table_num"><img src="/assets/icons/table-Icon.png" height="15px" style="margin-right: 10px;">Table x</h2>
+          <div style="display:flex; align-items: center;" id="download_data"><img src="./assets/icons/download_icon.png" style="height:15px;" id="dl_icon"><p id="text_change">Download Data</p></div>
+          <p id="last_update">Last Updated: hh:mm:ss dd/mm/yy</p>
+          <button id="closeModal"><img src="/assets/icons/close-icon.png" height="15px" style="margin-right: 5px;">Close</button>
+        </div>
+
+        <div id="dash_body_header">
+          <div class="sensor_type_id">
+            <div class="sensor_header">
+              <h3>msr-2</h3>
+              <p id="msr-2-id" style="opacity: 0.5;">#sensor_id</p>
+            </div>
+          </div>
+          <div class="sensor_type_id">
+            <div class="sensor_header">
+              <h3>air-1</h3>
+              <p id="air-1-id" style="opacity: 0.5;">#sensor_id</p>
+            </div>
+          </div>
+          <div class="sensor_type_id">
+            <div class="sensor_header">
+              <h3>[1] smart-plug-v2</h3>
+              <p id="smart-plug-1-id" style="opacity: 0.5;">#sensor_id</p>
+            </div>
+          </div>
+          <div class="sensor_type_id">
+            <div class="sensor_header">
+              <h3>[2] smart-plug-v2</h3>
+              <p id="smart-plug-2-id" style="opacity: 0.5;">#sensor_id</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="output_data">
+          <div class="sensor_data " id="msr-2-data">
+            <!--Added via JavaScript innerHTML-->
+          </div>
+          <div class="sensor_data" id="air-1-data">
+            <!--Added via JavaScript innerHTML-->
+          </div>
+          <div class="sensor_data" id="smart-plug-1-data">
+            <!--Added via JavaScript innerHTML-->
+          </div>
+          <div class="sensor_data" id="smart-plug-2-data">
+            <!--Added via JavaScript innerHTML-->
+          </div>
+        </div>
+
+        <div id="chart_div">
+          <canvas id="myChart"></canvas>
+        </div>
+
+      </div>
+    </div>
+
+    <!--Sensibo Aircon Modal div initially hidden-->
+    <div class="aircon_modal" id="aircon_modal">
+      <div id="remote_screen">
+        <div id="remote_hvac_mode">
+          <h3>MODE:</h3>
+          <button class="remote_hvac_mode_btn" id="hvac_left_btn">◄</button>
+          <p class="hvac_mode" id="hvac_off">OFF</p>
+          <p class="hvac_mode" id="hvac_cool">COOL</p>
+          <p class="hvac_mode" id="hvac_heat">HEAT</p>
+          <button class="remote_hvac_mode_btn" id="hvac_right_btn">►</button>
+        </div>
+        <div id="remote_temperature">
+          <div id="remote_temperature_display">26.5</div>
+          <div id="remote_temp_buttons">
+            <button class="remote_temp_btn" id="temp_up_btn">▲</button>
+            <p>°C</p>
+            <button class="remote_temp_btn" id="temp_down_btn">▼</button>
+          </div>
+        </div>
+      </div>
+      <div id="remote_buttons">
+        <button id="set_hvac_mode_btn" class="ac_remote_btn" style="color: rgb(81, 146, 81)">SET STATE</button> <br>
+        <button id="closeAirconModal" class="ac_remote_btn" style="color: rgb(148, 76, 76)">EXIT</button>
+      </div>
+    </div>
+
+    <!--Tools div located at bottom left of page-->
+    <div id="tools">
+      <!-- From Uiverse.io by mrhyddenn -->
+      <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; background-color: #e2e2e2; border-radius: 5px;font-size: 16px; font-weight: 900;">
+        <label class="switch" id="switch_handler">
+          <input class="cb" type="checkbox" checked="true" id="light_switch">
+          <span class="slider"></span>
+        </label>
+          <p style="margin: 15px; color: rgb(49, 49, 49);">Light Switch</p>
+      </div>
+
+      <!-- From Uiverse.io by WhiteNervosa --> 
+      <div class="customCheckBoxHolder">
+
+        <input type="checkbox" id="temp_checkbox" class="customCheckBoxInput" checked="true">
+        <label for="temp_checkbox" class="customCheckBoxWrapper">
+            <div class="customCheckBox">
+                <div class="inner">Toggle Labels</div>
+            </div>
+        </label>
+
+      </div>
+
+      <button id = "rst_cam_btn" class="button"><img src="/assets/icons/isometric_view.png" style="height: 15px; margin-right: 0.3em; left: 0.5em;"><span class="inner">Isometric View</span></button>
+      <button id = "top_cam_btn" class="button"><img src="/assets/icons/overhead_view.png" style="height: 15px; margin-right: 0.3em; left: 0.5em;"><span class="inner">Overhead View</span></button>
+        <br>
+    <!-- END of Tools div --> 
+    </div>
+  
+
+    <!--Test Divs-->
+    <div id="CAM_TEST" class="TEST" style="color: white;">CAM TEST</div>
+    <div id="CONTROLS">Left Click: Pan | Right Click: Rotate | Scroll Wheel: Zoom</div>
+
+
+    <!--Linking to main Javascript-->
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
