@@ -1,0 +1,959 @@
+openapi: 3.1.0
+info:
+  title: SSL IoT-1
+  summary: OpenAPI Spec for interacting wth various sensors and actuators in Smart-iLAB.
+  version: 1.0.0
+
+# ______ SECURITY FEATURES START ______
+# 1) Define the key name and location
+components:
+  securitySchemes:
+    ApiKeyAuth: # arbitrary name for the security scheme
+      type: apiKey
+      in: header # can be "header", "query" or "cookie"
+      name: X-API-KEY # name of the header, query parameter or cookie
+
+# 2) Apply the API key globally to all operations
+security:
+  - ApiKeyAuth: [] # use the same name as under securitySchemes
+
+# ______ SECURITY FEATURES END ______
+
+
+servers:
+  - url: 'http://localhost:80'
+
+paths:
+  # DIGITAL TWIN
+  /access/{api_key}:
+    get:
+      tags: [ 'Digital Twin' ]
+      description: Return Access Level of API Key (-1 - X, 0 - A ,1 - R,2 - R&W)
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: api_key
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully return access level
+        '404':
+          description: Unsuccessfully return access level
+  # USER MANAGEMENT
+  /users/{user_name}:
+    post:
+      tags: ['User Management']
+      description: Create User with Access Level (0 - A ,1 - R,2 - R&W)
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: user_name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: access_level
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully create user
+        '404':
+          description: Unsuccessfully create user
+    get:
+      tags: ['User Management']
+      security:
+        - ApiKeyAuth: [ ]
+      description: Return data of specific user
+      parameters:
+        - name: user_name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully returned data of specific user
+        '404':
+          description: User data not found
+    put:
+      tags: ['User Management']
+      security:
+        - ApiKeyAuth: [ ]
+      description: Change Specific User's Access Level (0 - A ,1 - R,2 - R&W)
+      parameters:
+        - name: user_name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: access_level
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully change user access level
+        '404':
+          description: Unsuccessfully change user access level
+    delete:
+      tags: ['User Management']
+      security:
+        - ApiKeyAuth: [ ]
+      description: Delete specific user
+      parameters:
+        - name: user_name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully delete specific user
+        '404':
+          description: Unsuccessfully delete specific user
+  /users:
+    get:
+      tags: ['User Management']
+      security:
+        - ApiKeyAuth: [ ]
+      description: Return all available usernames
+      responses:
+        '200':
+          description: Successfully returned all available usernames
+        '404':
+          description: Usernames not found
+  # TRANSACTIONS
+  /transactions:
+    get:
+      tags: ['Transactions']
+      security:
+        - ApiKeyAuth: [ ]
+      description: Return last 10 transactions
+      parameters:
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successfully returned most recent transactions data
+        '404':
+          description: Unable to transactions data
+        '400':
+          description: Invalid Request
+  # Apollo AIR-1
+  /air-1:
+    get:
+      tags: ['Apollo AIR-1']
+      description: Return all available Apollo AIR-1 IDs
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        '200':
+          description: Successfully returned all available Apollo AIR-1 IDs
+        '404':
+          description: Apollo AIR-1 IDs not found
+
+  /air-1/{id}:
+    get:
+      tags: ['Apollo AIR-1']
+      description: Return most recent/historical data of a specific Apollo AIR-1
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successfully returned most recent/historical data of a specific Apollo AIR-1
+        '404':
+          description: Unable to find specific Apollo AIR-1
+        '400':
+          description: Invalid Request
+
+  /air-1/{id}/light:
+    post:
+      tags: ['Apollo AIR-1']
+      description: Set the LED light of a specific Apollo Air 1
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: red
+          in: query
+          required: false
+          schema:
+            type: float
+        - name: green
+          in: query
+          required: false
+          schema:
+            type: float
+        - name: blue
+          in: query
+          required: false
+          schema:
+            type: float
+        - name: brightness
+          in: query
+          required: false
+          schema:
+            type: float
+      responses:
+        '200':
+          description: Successfully set the LED light of a specific Apollo AIR-1
+        '404':
+          description: Unable to find specific Apollo AIR-1
+        '400':
+          description: Invalid Request
+
+  /air-1/{id}/avg:
+    get:
+      tags: ['Apollo AIR-1']
+      description: Return average historical data of a specific sensor data of a specific Apollo AIR-1
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: sensData
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully returned  average historical data of a specific sensor data of a specific Apollo AIR-1
+        '404':
+          description: Unable to find specific Apollo AIR-1
+        '400':
+          description: Invalid Request
+
+  # Apollo MSR-2
+  /msr-2:
+    get:
+      tags: ['Apollo MSR-2']
+      description: Return all available Apollo MSR-2 IDs
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        '200':
+          description: Successfully returned all available Apollo MSR-2 IDs
+        '404':
+          description: Apollo MSR-2 IDs not found
+
+  /msr-2/{id}:
+    get:
+      tags: ['Apollo MSR-2']
+      description: Return most recent/historical data of a specific Apollo MSR-2
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successfully returned most recent/historical data of a specific Apollo MSR-2
+        '404':
+          description: Unable to find specific Apollo MSR-2
+        '400':
+          description: Invalid Request
+
+  /msr-2/{id}/light:
+    post:
+      tags: ['Apollo MSR-2']
+      description: Set the LED light of a specific Apollo MSR-2
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: red
+          in: query
+          required: false
+          schema:
+            type: float
+        - name: green
+          in: query
+          required: false
+          schema:
+            type: float
+        - name: blue
+          in: query
+          required: false
+          schema:
+            type: float
+        - name: brightness
+          in: query
+          required: false
+          schema:
+            type: float
+      responses:
+        '200':
+          description: Successfully set the LED light of a specific Apollo MSR-2
+        '404':
+          description: Unable to find specific Apollo MSR-2
+        '400':
+          description: Invalid Request
+
+  /msr-2/{id}/buzzer:
+    post:
+      tags: ['Apollo MSR-2']
+      description: Play a rtttl string on the buzzer of a specific Apollo MSR-2
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: mtttl_string
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully played an rtttl string on the buzzer of a specific Apollo MSR-2
+        '404':
+          description: Unable to find specific Apollo MSR-2
+        '400':
+          description: Invalid Request
+
+  /msr-2/{id}/avg:
+    get:
+      tags: ['Apollo MSR-2']
+      description: Return average historical data of a specific sensor data of a specific Apollo MSR-2
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: sensData
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully returned  average historical data of a specific sensor data of a specific Apollo MSR-2
+        '404':
+          description: Unable to find specific Apollo MSR-2
+        '400':
+          description: Invalid Request
+
+  # Athom Smart Plug v2
+  /smart-plug-v2:
+    get:
+      tags: ['Athom Smart Plug v2']
+      description: Return all available Athom Smart Plug v2 IDs
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        '200':
+          description: Successfully returned all available Athom Smart Plug v2 IDs
+        '404':
+          description: Athom Smart Plug v2 IDs not found
+
+  /smart-plug-v2/{id}:
+    get:
+      tags: ['Athom Smart Plug v2']
+      description: Return most recent/historical data of a specific Athom Smart Plug v2
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successfully returned most recent/historical data of a specific Athom Smart Plug v2
+        '404':
+          description: Unable to find specific Athom Smart Plug v2
+        '400':
+          description: Invalid Request
+
+  /smart-plug-v2/{id}/relay:
+    post:
+      tags: ['Athom Smart Plug v2']
+      description: Set the relay of a specific Athom Smart Plug v2
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully set the relay of a specific Athom Smart Plug v2
+        '404':
+          description: Unable to find specific Athom Smart Plug v2
+        '400':
+          description: Invalid Request
+
+  /smart-plug-v2/{id}/avg:
+    get:
+      tags: ['Athom Smart Plug v2']
+      description: Return average historical data of a specific sensor data of a specific Athom Smart Plug v2
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: sensData
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully returned  average historical data of a specific sensor data of a specific Athom Smart Plug v2
+        '404':
+          description: Unable to find specific Athom Smart Plug v2
+        '400':
+          description: Invalid Request
+
+  # AirGradient One
+  /ag-one:
+    get:
+      tags: ['AirGradient One']
+      description: Return all available AirGradient One IDs
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        '200':
+          description: Successfully returned all available AirGradient One IDs
+        '404':
+          description: AirGradient One IDs not found
+
+  /ag-one/{id}:
+    get:
+      tags: ['AirGradient One']
+      description: Return most recent/historical data of a specific AirGradient One
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successfully returned most recent/historical data of a specific AirGradient One
+        '404':
+          description: Unable to find specific AirGradient One
+        '400':
+          description: Invalid Request
+
+  /ag-one/{id}/light:
+    post:
+      tags: ['AirGradient One']
+      description: Set the LED strip of a specific AirGradient One
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: red
+          in: query
+          required: false
+          schema:
+            type: float
+        - name: green
+          in: query
+          required: false
+          schema:
+            type: float
+        - name: blue
+          in: query
+          required: false
+          schema:
+            type: float
+        - name: brightness
+          in: query
+          required: false
+          schema:
+            type: float
+      responses:
+        '200':
+          description: Successfully set the LED light of a specific AirGradient One
+        '404':
+          description: Unable to find specific AirGradient One
+        '400':
+          description: Invalid Request
+
+  /ag-one/{id}/avg:
+    get:
+      tags: ['AirGradient One']
+      description: Return average historical data of a specific sensor data of a specific AirGradient One
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: sensData
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully returned  average historical data of a specific sensor data of a specific AirGradient One
+        '404':
+          description: Unable to find specific AirGradient One
+        '400':
+          description: Invalid Request
+
+  # Zigbee2MQTT
+  /zigbee2mqtt:
+    get:
+      tags: ['Zigbee2MQTT']
+      description: Return all available Zigbee2MQTT device and group IDs
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        '200':
+          description: Successfully returned all available Zigbee2MQTT device and group IDs
+        '404':
+          description: Zigbee2MQTT device and group IDs not found
+
+  /zigbee2mqtt/{id}:
+    get:
+      tags: ['Zigbee2MQTT']
+      description: Return most recent/historical data of a specific Zigbee2MQTT device
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successfully returned most recent/historical data of a specific Zigbee2MQTT device
+        '404':
+          description: Unable to find specific Zigbee2MQTT device
+        '400':
+          description: Invalid Request
+    post:
+      tags: ['Zigbee2MQTT']
+      description: Set the state, brightness, and/or color temperature of a light or group of lights
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: light_state
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: light_brightness
+          in: query
+          required: false
+          schema:
+            type: int
+        - name: light_color_temperature
+          in: query
+          required: false
+          schema:
+            type: int
+        - name: switch_state
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: blinds_state
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: blinds_position
+          in: query
+          required: false
+          schema:
+            type: int
+      responses:
+        '200':
+          description: Successfully the state, brightness, and/or color temperature of a light or group of lights
+        '404':
+          description: Unable to find specific light or group of lights
+        '400':
+          description: Invalid Request
+
+  # Sensibo Air Pro
+  /sensibo:
+    get:
+      tags: ['Sensibo Air Pro']
+      description: Return all available Sensibo Air Pro IDs
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        '200':
+          description: Successfully returned all available Sensibo Air Pro IDs
+        '404':
+          description: Sensibo Air Pro IDs not found
+
+  /sensibo/{id}:
+    get:
+      tags: ['Sensibo Air Pro']
+      description: Return most recent/historical data of a specific Sensibo Air Pro
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successfully returned most recent/historical data of a specific Sensibo Air Pro
+        '404':
+          description: Unable to find specific Sensibo Air Pro
+        '400':
+          description: Invalid Request
+
+  /sensibo/{id}/hvac:
+    post:
+      tags: ['Sensibo Air Pro']
+      description: Set the status of a specific Sensibo Air Pro's HVAC
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: hvac_mode
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: target_temperature
+          in: query
+          required: false
+          schema:
+            type: float
+      responses:
+        '200':
+          description: Successfully set the status of a specific Sensibo Air Pro's HVAC
+        '404':
+          description: Unable to find specific Sensibo Air Pro
+        '400':
+          description: Invalid Request
+
+  # groups
+  /groups:
+    get:
+      tags: ['Groups']
+      description: Return all available group IDs
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        '200':
+          description: Successfully returned all available group IDs
+        '404':
+          description: Unable to get group IDs
+    post:
+      tags: ['Groups']
+      description: Create a new group of devices
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: apollo_air_1_ids
+          in: query
+          required: false
+          schema:
+            type: array
+        - name: apollo_msr_2_ids
+          in: query
+          required: false
+          schema:
+            type: array
+        - name: athom_smart_plug_v2_ids
+          in: query
+          required: false
+          schema:
+            type: array
+        - name: zigbee2mqtt_ids
+          in: query
+          required: false
+          schema:
+            type: array
+      responses:
+        '200':
+          description: Successfully created a new group of devices
+        '400':
+          description: Invalid request
+    put:
+      tags: ['Groups']
+      description: Change the members of a group
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: apollo_air_1_ids
+          in: query
+          required: false
+          schema:
+            type: array
+        - name: apollo_msr_2_ids
+          in: query
+          required: false
+          schema:
+            type: array
+        - name: athom_smart_plug_v2_ids
+          in: query
+          required: false
+          schema:
+            type: array
+        - name: zigbee2mqtt_ids
+          in: query
+          required: false
+          schema:
+            type: array
+      responses:
+        '200':
+          description: Successfully changed the members of a group
+        '404':
+          description: Group does not exist
+        '400':
+          description: Invalid request
+    delete:
+      tags: ['Groups']
+      description: Delete an existing group
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully deleted an existing group
+        '404':
+          description: Group does not exist
+
+  /groups/{id}:
+    get:
+      tags: ['Groups']
+      description: Return most recent data from all devices in a specific group
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully returned most recent data from all devices in a specific group
+        '404':
+          description: Unable to find specific group
