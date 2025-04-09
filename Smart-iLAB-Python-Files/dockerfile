@@ -4,7 +4,7 @@ WORKDIR /PYtoDB
 
 COPY requirements.txt ./
 
-RUN pip install -r requirementss.txt
+RUN pip install -r requirements.txt
 
 COPY . .
 
