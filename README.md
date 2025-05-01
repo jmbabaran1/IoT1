@@ -2,7 +2,7 @@
 
 ## Project Description
 
-A testbed was developed for the Smart i-LAB Project's IoT Platform located at the University of the Philippines - Diliman Campus' Electrical and Electronics Engineering Institute (EEEI) Room 308. This is implemented through RESTful API standard web-based access points for sensor data acquisition and device controls supported by a TimescaleDB (PostgreSQL-based) database, Python databridge APIs, an EMQX Broker (MQTT-based communication protocol), and Home Assistant configuration and device access tools. Included with the project is a web-based Digital visualization or _Digital Twin_ of the Smart i-LAB, reflecting the status of, as well as providing some level of basic control to, some of the functionalities within the lab. This functions both as an aid to remote experimentation/testing and serves as a prime example of the capabilities/functionalities of the testbed since the Digital Twin will be entirely dependent on the RESTful API's endpoints for its core functionalities.
+A testbed developed for the Smart i-LAB Project's IoT Platform located at the University of the Philippines - Diliman Campus' Electrical and Electronics Engineering Institute (EEEI) Room 308. This is implemented through RESTful API standard web-based access points for sensor data acquisition and device controls supported by a TimescaleDB (PostgreSQL-based) database, Python databridge APIs, an EMQX Broker (MQTT-based communication protocol), and Home Assistant configuration and device access tools. Included with the project is a web-based Digital visualization or _Digital Twin_ of the Smart i-LAB, reflecting the status of, as well as providing some level of basic control to, some of the functionalities within the lab. This functions both as an aid to remote experimentation/testing and serves as a prime example of the capabilities/functionalities of the testbed since the Digital Twin will be entirely dependent on the RESTful API's endpoints for its core functionalities.
 
 ## How to Use the Repository (Subject to Changes)
 
@@ -49,6 +49,16 @@ The project is implemented in a Linux Ubuntu 24.04.2 LTS server Operating System
 ## Limitations
 *To add: Customizability issues particularly in naming or structures and possible errors to look out for due to lack of complete error catching, limitations set by the developers of the tools used, etc* 
 ### Database
+- Specific naming standard, also has to be in sync with the databridge
 ### REST API
+- TimescaleDB buckets not fully utilized
 ### EMQX
+- Update Frequency: Limited to the update frequency set during device configuration
+  - The project was implemented with a 0.1Hz data update frequency + datapoints produced by changes in device actuator changes
+- For more information on other limitations such as connection and topic limits, refer to [this](https://docs.emqx.com/en/emqx/latest/getting-started/restrictions.html).
 ### Python API Bridges
+- Currently, Sensibo Air Pro Databridge encounters an error when a connection error occurs
+- The data distribution algorithm for MQTT devices will only work given specific naming standards:
+  - naming standards apply to both the MQTT topics used and database table names used
+  - ESP algorithm converts from MQTT topic "device_name_id/data" to database table "device-name-id", all topics are listed in an array manually
+  - Zigbee algorithm converts from MQTT topic "device_name_id/set" to database table "zigbee2mqtt-deviceID", all topics are based on database table "zigbee2mqtt"
