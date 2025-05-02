@@ -3,41 +3,47 @@ import json
 import time
 import datetime
 import pytz
-import os
 timezone = "Asia/Singapore"
 
-from dotenv import load_dotenv
 from requests import get
 from requests import post
 from psycopg2 import sql
-load_dotenv()
+
+# database details
+DATABASE_IP = "10.158.66.30"
+DATABASE_PORT = 5432
+DATABASE_NAME = "postgres"
+DATABASE_USERNAME = "postgres"
+DATABASE_PASSWORD = "JXU73zooIoT1"
 
 # database variables to be used
 database_row, database_table_name = {}, ""
 data, columns, values = {}, {}, {}
 
 # initialize connection to database and create cursor
-conn = psycopg2.connect(host=os.getenv('DATABASE_IP'), dbname=os.getenv('DATABASE_USERNAME'), user=os.getenv('DATABASE_USERNAME'), password=os.getenv('DATABASE_PASSWORD'), port=os.getenv('DATABASE_PORT'))
+conn = psycopg2.connect(host=DATABASE_IP, dbname=DATABASE_NAME, user=DATABASE_USERNAME, password=DATABASE_PASSWORD, port=DATABASE_PORT)
 conn.autocommit = True
 cur = conn.cursor()
 
 # home assistant details and variables to be used
-HOME_ASSISTANT_IP = os.getenv('HOME_ASSISTANT_URL').replace("http://", "")
-TOKEN = os.getenv('HOME_ASSISTANT_TOKEN')
+HOME_ASSISTANT_IP = "10.158.71.11"
+HOME_ASSISTANT_PORT = "8123"
+TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI3N2ViMDIzZmJjOWE0Yjc2YmYwMjE4YTFmOWY1ZDQwNyIsImlhdCI6MTc0MDExMjc4NSwiZXhwIjoyMDU1NDcyNzg1fQ.iNJpri8xnC_SvNbWGg1ygTWq6ywvhkuCYRJI2GpB0UI"
 HEADERS = {"Authorization": f"Bearer {TOKEN}", "content-type": "application/json"}
 url, response, data = "", "", ""
-HOME_ASSISTANT_PORT = os.getenv('HOME_ASSISTANT_PORT')
+
 
 
 def getAndInsertSensiboAirProData(deviceID: str):
+    
+    url = f"http://{HOME_ASSISTANT_IP}:{HOME_ASSISTANT_PORT}/api/states/{deviceID}"
+
     try:
-
-        url = f"http://{HOME_ASSISTANT_IP}:{HOME_ASSISTANT_PORT}/api/states/{deviceID}"
-        response = get(url=url, headers=HEADERS)
-        data = json.loads(str(response.text))
-
+        
         database_table_name = "sensibo_" + deviceID.replace(".","_")
+        response = get(url=url, headers=HEADERS)
 
+        data = json.loads(str(response.text))
         database_row.update({"timestamp":datetime.datetime.now(pytz.timezone(timezone)).strftime("%Y-%m-%d %X%z")})
         database_row.update({"temperature":data['attributes']['current_temperature']})
         database_row.update({"humidity":data['attributes']['current_humidity']})
@@ -54,8 +60,8 @@ def getAndInsertSensiboAirProData(deviceID: str):
 
     except:
 
-        cur.execute(f"INSERT INTO error_logs ({database_table_name}) VALUES ('{str(database_row).replace("'", "")}')")
-        print("[{timestamp}]  Topic: {topic:<35}  |  Data: {data}".format(timestamp=database_row['timestamp'], topic="error_logs", data=str(database_row)))
+        cur.execute(f"INSERT INTO error_logs ({database_table_name}) VALUES ('{datetime.datetime.now(pytz.timezone(timezone)).strftime("%Y-%m-%d %X%z")}')")
+        print("[{timestamp}]  Topic: {topic:<35}  |  Data: {data}".format(timestamp=datetime.datetime.now(pytz.timezone(timezone)).strftime("%Y-%m-%d %X%z"), topic="error_logs", data=str("error")))
         database_row.clear()
         return
 
