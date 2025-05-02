@@ -786,23 +786,23 @@ rst_cam_btn.onclick = function(){
 
     // Define Positions of Blinds #1 fans when CLOSED
     const blinds1_positions_closed = [
-        [-15.10, 4.8, 0.0],
-        [-15.10, 4.8, -0.4],
-        [-15.10, 4.8, -0.8],
-        [-15.10, 4.8, -1.2],
-        [-15.10, 4.8, -1.6],
-        [-15.10, 4.8, -2.0],
-        [-15.10, 4.8, -2.4],
-        [-15.10, 4.8, -2.8],
-        [-15.10, 4.8, -3.2],
-        [-15.10, 4.8, -3.6],
-        [-15.10, 4.8, -4.0],
-        [-15.10, 4.8, -4.4],
+        [-15, 4.65, 0.0],
+        [-15, 4.65, -0.4],
+        [-15, 4.65, -0.8],
+        [-15, 4.65, -1.2],
+        [-15, 4.65, -1.6],
+        [-15, 4.65, -2.0],
+        [-15, 4.65, -2.4],
+        [-15, 4.65, -2.8],
+        [-15, 4.65, -3.2],
+        [-15, 4.65, -3.6],
+        [-15, 4.65, -4.0],
+        [-15, 4.65, -4.4],
     ];
     
     // Store bulbs/spheres in this array
     const blinds1_fans = [];
-    const fan_geometry = new THREE.PlaneGeometry(0.5, 4);
+    const fan_geometry = new THREE.PlaneGeometry(0.35, 3.8);
     const fan_material = new THREE.MeshToonMaterial( {color: 0xe0cc92, side: THREE.DoubleSide} );
 
     // Make bulbs and push into storage array
@@ -1066,6 +1066,7 @@ table_positions.forEach((id, index) => {
 
 // Function to update Zigbee Light per table/workstation
 function zigbeelights_update() {
+    // Update Zigbee lights
     for (let i = 1; i < 17; i++) {
         fetch(ip + `/zigbee2mqtt/table_${i}`, { method: 'GET', headers: { 'Accept' : '*/*', 'X-API-KEY' : '54b4310c-da79-441b-b135-d9b00ba073fe'} })
             .then(res => res.json())
@@ -1086,6 +1087,25 @@ function zigbeelights_update() {
 
 // Call the function to update Zigbee2MQTT Lights here (spotlight)
 zigbeelights_update();
+
+function zigbeeblinds_update() {
+    // Update Zigbee blinds
+    fetch(ip + `/zigbee2mqtt/aqara_driver_1`, { method: 'GET', headers: { 'Accept' : '*/*', 'X-API-KEY' : '54b4310c-da79-441b-b135-d9b00ba073fe'} })
+    .then(res => res.json())
+    .then(data => {
+        blinds1_fans.forEach((fan, index) => {
+            let scale = 1 - 0.85*(1 - data['position']/100);
+            fan.position.set(blinds1_positions_closed[index][0],blinds1_positions_closed[index][1],blinds1_positions_closed[index][2]*scale)
+            fan.rotation.set(0,-Math.PI/(1.4+(scale*0.4)),0);
+        });
+    })
+    .catch(error => console.error(`Error fetching Zigbee Blinds State:`, error));
+}
+
+// Call the function to update Zigbee2MQTT Blinds here
+zigbeeblinds_update();
+const blinds_state = setInterval(zigbeeblinds_update, 5000); // Run function every 5000ms (5s)
+
 // Get and store all available Sensibo Air Pro IDs
 const sensibo_ids = [];
 
