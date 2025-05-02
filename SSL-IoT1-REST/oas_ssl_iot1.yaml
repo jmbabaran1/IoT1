@@ -1,0 +1,1606 @@
+openapi: 3.1.0 
+info:
+  title: SSL IoT-1
+  summary: OpenAPI Spec for interacting wth various sensors and actuators in Smart-iLAB.
+  version: 1.0.0
+security:
+  - ApiKeyAuth: []
+servers:
+  - url: 'http://10.158.66.30:80'
+paths:
+  # DIGITAL TWIN
+  /access/{api_key}:
+    get:
+      tags: ['Digital Twin']
+      description: Get the access level of an API key (-1 = Invalid Key, 0 = Admin, 1 = Read Only, 2 = Read & Write).
+      parameters:
+        - name: api_key
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Successfully returned the access level of the given API key.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '500':
+          description: Internal server error.
+  # USER MANAGEMENT
+  /users/{user_name}:
+    post:
+      tags: ['User Management']
+      description: Create a new user with a set access level (0 = Admin, 1 = Read Only, 2 = Read & Write).
+      parameters:
+        - name: user_name
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - name: access_level
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully created a new user with a set access level.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '409':
+          description: Given username is already taken.
+        '500':
+          description: Internal server error.
+    get:
+      tags: ['User Management']
+      description: Get the data of a user.
+      parameters:
+        - name: user_name
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Successfully returned the data of a user.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '404':
+          description: Unable to find a user that matches the given ID.
+        '500':
+          description: Internal server error.
+    put:
+      tags: ['User Management']
+      description: Change the access level of a user (0 = Admin, 1 = Read Only, 2 = Read & Write).
+      parameters:
+        - name: user_name
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - name: access_level
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 2
+      responses:
+        '200':
+          description: Successfully changed the access level of a user.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '404':
+          description: Unable to find a user that matches the given ID.
+        '500':
+          description: Internal server error.
+    delete:
+      tags: ['User Management']
+      description: Delete a user.
+      parameters:
+        - name: user_name
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Successfully deleted a user.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '404':
+          description: Unable to find a user that matches the given ID.
+        '500':
+          description: Internal server error.
+  /users:
+    get:
+      tags: ['User Management']
+      description: Get all usernames.
+      responses:
+        '200':
+          description: Successfully returned all usernames.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '500':
+          description: Internal server error.
+  # TRANSACTIONS
+  /transactions:
+    get:
+      tags: ['Transactions']
+      description: Get the last 10 or historical transactions.
+      parameters:
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+      responses:
+        '200':
+          description: Successfully returned the last 10 or historical transactions.
+        '400':
+          description: Invalid request.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '500':
+          description: Internal server error.
+  # APOLLO AIR-1
+  /air-1:
+    get:
+      tags: ['Apollo AIR-1']
+      description: Get the IDs of all Apollo AIR-1's.
+      responses:
+        '200':
+          description: Successfully returned the IDs of all Apollo AIR-1's.
+        '401':
+          description: Invalid API key.
+        '500':
+          description: Internal server error.
+  /air-1/{id}:
+    get:
+      tags: ['Apollo AIR-1']
+      description: Get the latest/historical data of an Apollo AIR-1.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "88e4c8",
+              "88e590",
+              "89e8d8",
+              "87b074",
+              "889720",
+              "87f510",
+              "2da640",
+              "89ea14",
+              "889b88",
+              "889938",
+              "88e85c",
+              "89e548",
+              "88970c",
+              "2deb24",
+              "89e5f0",
+              "cc8f24"
+            ]
+          description: ID of the Apollo AIR-1.
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Starting date and time for historical data.
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Ending date and time for historical data.
+      responses:
+        '200':
+          description: Successfully returned the latest/historical data of an Apollo AIR-1.
+        '401':
+          description: Invalid API key.
+        '400':
+          description: Bad request.
+        '404':
+          description: Unable to find an Apollo AIR-1 that matches the given ID.
+        '500':
+          description: Internal server error.
+  /air-1/{id}/light:
+    post:
+      tags: ['Apollo AIR-1']
+      description: Set the state of the LED light of an Apollo AIR-1.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "88e4c8",
+              "88e590",
+              "89e8d8",
+              "87b074",
+              "889720",
+              "87f510",
+              "2da640",
+              "89ea14",
+              "889b88",
+              "889938",
+              "88e85c",
+              "89e548",
+              "88970c",
+              "2deb24",
+              "89e5f0",
+              "cc8f24"
+            ]
+          description: ID of the Apollo AIR-1.
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "ON",
+              "OFF"
+            ]
+          description: The desired state of the LED light. Can be "ON" or "OFF".
+        - name: red
+          in: query
+          required: false
+          schema:
+            type: float
+            minimum: 0
+            maximum: 1
+          description: The desired red value for the LED light. Can be any number from 0-1.
+        - name: green
+          in: query
+          required: false
+          schema:
+            type: float
+            minimum: 0
+            maximum: 1
+          description: The desired green value for the LED light. Can be any number from 0-1.
+        - name: blue
+          in: query
+          required: false
+          schema:
+            type: float
+            minimum: 0
+            maximum: 1
+          description: The desired blue value for the LED light. Can be any number from 0-1.
+        - name: brightness
+          in: query
+          required: false
+          schema:
+            type: float
+            minimum: 0
+            maximum: 1
+          description: The desired brightness value for the LED light. Can be any number from 0-1.
+      responses:
+        '200':
+          description: Successfully set the state of the LED light of an Apollo AIR-1.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '404':
+          description: Unable to find an Apollo AIR-1 that matches the given ID.
+        '500':
+          description: Internal server error.
+  /air-1/{id}/avg:
+    get:
+      tags: ['Apollo AIR-1']
+      description: Get the historical average of a specific sensor data of an Apollo AIR-1.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "88e4c8",
+              "88e590",
+              "89e8d8",
+              "87b074",
+              "889720",
+              "87f510",
+              "2da640",
+              "89ea14",
+              "889b88",
+              "889938",
+              "88e85c",
+              "89e548",
+              "88970c",
+              "2deb24",
+              "89e5f0",
+              "cc8f24"
+            ]
+          description: ID of the Apollo AIR-1.
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Starting date and time for the historical average.
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Ending date and time for the historical average.
+        - name: sensData
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+          description: The desired sensor data to be averaged.
+      responses:
+        '200':
+          description: Successfully returned the historical average of a specific sensor data of an Apollo AIR-1.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '404':
+          description: Unable to find an Apollo AIR-1 that matches the given ID.
+        '500':
+          description: Internal server error.
+  # APOLLO MSR-2
+  /msr-2:
+    get:
+      tags: ['Apollo MSR-2']
+      description: Get the IDs of all Apollo MSR-2's.
+      responses:
+        '200':
+          description: Successfully returned the IDs of all Apollo MSR-2's.
+        '500':
+          description: Internal server error.
+  /msr-2/{id}:
+    get:
+      tags: ['Apollo MSR-2']
+      description: Get the latest/historical data of an Apollo MSR-2.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "2b7624",
+              "87a5f4",
+              "c07ce8",
+              "cc0b5c",
+              "89f464",
+              "87a5dc",
+              "1ee998",
+              "87a5ec",
+              "1ef110",
+              "87a298",
+              "89304c",
+              "88edc8",
+              "cd7014",
+              "c660fc",
+              "c8f5b4",
+              "c7b650"
+            ]
+          description: ID of the Apollo MSR-2.
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Starting date and time for historical data.
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Ending date and time for historical data.
+      responses:
+        '200':
+          description: Successfully returned the latest/historical data of an Apollo MSR-2.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '404':
+          description: Unable to find an Apollo MSR-2 that matches the given ID.
+        '500':
+          description: Internal server error.
+  /msr-2/{id}/light:
+    post:
+      tags: ['Apollo MSR-2']
+      description: Set the state of the LED light of an Apollo MSR-2.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "2b7624",
+              "87a5f4",
+              "c07ce8",
+              "cc0b5c",
+              "89f464",
+              "87a5dc",
+              "1ee998",
+              "87a5ec",
+              "1ef110",
+              "87a298",
+              "89304c",
+              "88edc8",
+              "cd7014",
+              "c660fc",
+              "c8f5b4",
+              "c7b650"
+            ]
+          description: ID of the Apollo MSR-2.
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "ON",
+              "OFF"
+            ]
+          description: The desired state of the LED light. Can be "ON" or "OFF".
+        - name: red
+          in: query
+          required: false
+          schema:
+            type: float
+            minimum: 0
+            maximum: 1
+          description: The desired red value for the LED light. Can be any number from 0-1.
+        - name: green
+          in: query
+          required: false
+          schema:
+            type: float
+            minimum: 0
+            maximum: 1
+          description: The desired green value for the LED light. Can be any number from 0-1.
+        - name: blue
+          in: query
+          required: false
+          schema:
+            type: float
+            minimum: 0
+            maximum: 1
+          description: The desired blue value for the LED light. Can be any number from 0-1.
+        - name: brightness
+          in: query
+          required: false
+          schema:
+            type: float
+            minimum: 0
+            maximum: 1
+          description: The desired brightness value for the LED light. Can be any number from 0-1.
+      responses:
+        '200':
+          description: Successfully set the state of the LED light of an Apollo MSR-2.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '404':
+          description: Unable to find an Apollo MSR-2 that matches the given ID.
+        '500':
+          description: Internal server error.
+  /msr-2/{id}/buzzer:
+    post:
+      tags: ['Apollo MSR-2']
+      description: Play a RTTTL string on the buzzer of an Apollo MSR-2.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "2b7624",
+              "87a5f4",
+              "c07ce8",
+              "cc0b5c",
+              "89f464",
+              "87a5dc",
+              "1ee998",
+              "87a5ec",
+              "1ef110",
+              "87a298",
+              "89304c",
+              "88edc8",
+              "cd7014",
+              "c660fc",
+              "c8f5b4",
+              "c7b650"
+            ]
+          description: ID of the Apollo MSR-2.
+        - name: mtttl_string
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+          description: RTTTL string to be played on the buzzer.
+      responses:
+        '200':
+          description: Successfully played a RTTTL string on the buzzer of an Apollo MSR-2.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '404':
+          description: Unable to find an Apollo MSR-2 that matches the given ID.
+        '500':
+          description: Internal server error.
+  /msr-2/{id}/avg:
+    get:
+      tags: ['Apollo MSR-2']
+      description: Get the historical average of a specific sensor data of an Apollo MSR-2.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "2b7624",
+              "87a5f4",
+              "c07ce8",
+              "cc0b5c",
+              "89f464",
+              "87a5dc",
+              "1ee998",
+              "87a5ec",
+              "1ef110",
+              "87a298",
+              "89304c",
+              "88edc8",
+              "cd7014",
+              "c660fc",
+              "c8f5b4",
+              "c7b650"
+            ]
+          description: ID of the Apollo MSR-2.
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Starting date and time for the historical average.
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Ending date and time for the historical average.
+        - name: sensData
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+          description: The desired sensor data to be averaged.
+      responses:
+        '200':
+          description: Successfully returned the historical average of a specific sensor data of an Apollo MSR-2.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '404':
+          description: Unable to find an Apollo MSR-2 that matches the given ID.
+        '500':
+          description: Internal server error.
+  # ATHOM SMART PLUG V2
+  /smart-plug-v2:
+    get:
+      tags: ['Athom Smart Plug v2']
+      description: Get the IDs of all Athom Smart Plug v2's.
+      responses:
+        '200':
+          description: Successfully returned the IDs of all Athom Smart Plug v2's.
+        '401':
+          description: Invalid API key.
+        '500':
+          description: Internal server error.
+  /smart-plug-v2/{id}:
+    get:
+      tags: ['Athom Smart Plug v2']
+      description: Get the latest/historical data of an Athom Smart Plug v2.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            enum: [
+              "9d86aa",
+              "9d86e0",
+              "9d93d2",
+              "9d923d",
+              "9d929b",
+              "9d8665",
+              "9d9293",
+              "9d9572",
+              "9d88e7",
+              "9d929e",
+              "9d9421",
+              "9d89d4",
+              "9d92a3",
+              "9d8718",
+              "9d3535",
+              "9d90c3",
+              "9d97ec",
+              "9d927c",
+              "9d88c5",
+              "9cdee5",
+              "9d924e",
+              "9d9265",
+              "9d8877",
+              "9d8a03",
+              "9d88e6",
+              "9cda9a",
+              "9d90b9",
+              "9d94a6",
+              "9d8671",
+              "9d356f",
+              "9d887f",
+              "9d893e"
+            ]
+          description: ID of the Athom Smart Plug v2.
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Starting date and time for historical data.
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Ending date and time for historical data.
+      responses:
+        '200':
+          description: Successfully returned the latest/historical data of an Athom Smart Plug v2.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '404':
+          description: Unable to find an Athom Smart Plug v2 that matches the given ID.
+        '500':
+          description: Internal server error.
+  /smart-plug-v2/{id}/relay:
+    post:
+      tags: ['Athom Smart Plug v2']
+      description: Set the state of the relay of an Athom Smart Plug v2.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            enum: [
+              "9d86aa",
+              "9d86e0",
+              "9d93d2",
+              "9d923d",
+              "9d929b",
+              "9d8665",
+              "9d9293",
+              "9d9572",
+              "9d88e7",
+              "9d929e",
+              "9d9421",
+              "9d89d4",
+              "9d92a3",
+              "9d8718",
+              "9d3535",
+              "9d90c3",
+              "9d97ec",
+              "9d927c",
+              "9d88c5",
+              "9cdee5",
+              "9d924e",
+              "9d9265",
+              "9d8877",
+              "9d8a03",
+              "9d88e6",
+              "9cda9a",
+              "9d90b9",
+              "9d94a6",
+              "9d8671",
+              "9d356f",
+              "9d887f",
+              "9d893e"
+            ]
+          description: ID of the Athom Smart Plug v2.
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "On",
+              "Off"
+            ]
+          description: The desired state of the relay. Can be "On" or "Off".
+      responses:
+        '200':
+          description: Successfully set the state of the relay of an Athom Smart Plug v2.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '404':
+          description: Unable to find an Athom Smart Plug v2 that matches the given ID.
+        '500':
+          description: Internal server error.
+  /smart-plug-v2/{id}/avg:
+    get:
+      tags: ['Athom Smart Plug v2']
+      description: Get the historical average of a specific sensor data of an Athom Smart Plug v2.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            enum: [
+              "9d86aa",
+              "9d86e0",
+              "9d93d2",
+              "9d923d",
+              "9d929b",
+              "9d8665",
+              "9d9293",
+              "9d9572",
+              "9d88e7",
+              "9d929e",
+              "9d9421",
+              "9d89d4",
+              "9d92a3",
+              "9d8718",
+              "9d3535",
+              "9d90c3",
+              "9d97ec",
+              "9d927c",
+              "9d88c5",
+              "9cdee5",
+              "9d924e",
+              "9d9265",
+              "9d8877",
+              "9d8a03",
+              "9d88e6",
+              "9cda9a",
+              "9d90b9",
+              "9d94a6",
+              "9d8671",
+              "9d356f",
+              "9d887f",
+              "9d893e"
+            ]
+          description: ID of the Athom Smart Plug v2.
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Starting date and time for the historical average.
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Ending date and time for the historical average.
+        - name: sensData
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+          description: The desired sensor data to be averaged.
+      responses:
+        '200':
+          description: Successfully returned the historical average of a specific sensor data of an Athom Smart Plug v2.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '404':
+          description: Unable to find an Athom Smart Plug v2 that matches the given ID.
+        '500':
+          description: Internal server error.
+  # AIRGRADIENT ONE
+  /ag-one:
+    get:
+      tags: ['AirGradient One']
+      description: Get the IDs of all AirGradient Ones.
+      responses:
+        '200':
+          description: Successfully returned the IDs of all AirGradient Ones.
+        '401':
+          description: Invalid API key.
+        '500':
+          description: Internal server error.
+  /ag-one/{id}:
+    get:
+      tags: ['AirGradient One']
+      description: Get the latest/historical data of an AirGradient One.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "6f31cc"
+            ]
+          description: ID of the AirGradient One.
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Starting date and time for historical data.
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Ending date and time for historical data.
+      responses:
+        '200':
+          description: Successfully returned the latest/historical data of an AirGradient One.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '404':
+          description: Unable to find an AirGradient One that matches the given ID.
+        '500':
+          description: Internal server error.
+  /ag-one/{id}/light:
+    post:
+      tags: ['AirGradient One']
+      description: Set the state of the LED strip of an AirGradient One.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "6f31cc"
+            ]
+          description: ID of the AirGradient One.
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "ON",
+              "OFF"
+            ]
+          description: The desired state of the LED strip. Can be "ON" or "OFF".
+        - name: red
+          in: query
+          required: false
+          schema:
+            type: float
+            minimum: 0
+            maximum: 1
+          description: The desired red value for the LED strip. Can be any number from 0-1.
+        - name: green
+          in: query
+          required: false
+          schema:
+            type: float
+          description: The desired green value for the LED strip. Can be any number from 0-1.
+        - name: blue
+          in: query
+          required: false
+          schema:
+            type: float
+            minimum: 0
+            maximum: 1
+          description: The desired blue value for the LED strip. Can be any number from 0-1.
+        - name: brightness
+          in: query
+          required: false
+          schema:
+            type: float
+            minimum: 0
+            maximum: 1
+          description: The desired brightness value for the LED strip. Can be any number from 0-1.
+      responses:
+        '200':
+          description: Successfully set the state of the LED strip of an AirGradient One.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '404':
+          description: Unable to find an AirGradient One that matches the given ID.
+        '500':
+          description: Internal server error.
+  /ag-one/{id}/avg:
+    get:
+      tags: ['AirGradient One']
+      description: Get the historical average of a specific sensor data of an AirGradient One.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "6f31cc"
+            ]
+          description: ID of the AirGradient One.
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Starting date and time for the historical average.
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Ending date and time for the historical average.
+        - name: sensData
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+          description: The desired sensor data to be averaged.
+      responses:
+        '200':
+          description: Successfully returned the historical average of a specific sensor data of an AirGradient One.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '404':
+          description: Unable to find an AirGradient One that matches the given ID.
+        '500':
+          description: Internal server error.
+  # ZIGBEE2MQTT
+  /zigbee2mqtt:
+    get:
+      tags: ['Zigbee2MQTT']
+      description: Get the IDs of all Zigbee2MQTT devices and groups.
+      responses:
+        '200':
+          description: Successfully returned the IDs of all Zigbee2MQTT devices and groups.
+        '401':
+          description: Invalid API key.
+        '500':
+          description: Internal server error.
+  /zigbee2mqtt/{id}:
+    get:
+      tags: ['Zigbee2MQTT']
+      description: Get the latest/historical data of a Zigbee2MQTT device.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "top_lights_switch",
+              "table_lights_switch",
+              "room_lights_switch",
+              "front_lights_switch",
+              "table_right",
+              "H_R2_C4C5",
+              "SP4",
+              "SP6",
+              "H_R2_C3C4_solid",
+              "SP1",
+              "SP7",
+              "H_R1_C1C2",
+              "H_R1_C2C3",
+              "H_R1_C3C4",
+              "H_R2_C3C4_focus",
+              "SP3",
+              "V_C3_R1R2",
+              "V_C5_R1R2",
+              "H_R2_C1C2",
+              "SP5",
+              "H_R1_C4C5",
+              "table_1",
+              "table_2",
+              "table_3",
+              "table_4",
+              "table_5",
+              "table_6",
+              "table_7",
+              "table_8",
+              "table_9",
+              "table_10",
+              "table_11",
+              "table_12",
+              "table_13",
+              "table_14",
+              "table_15",
+              "table_16",
+              "table_left",
+              "H_R2_C2C3_focus",
+              "V_C4_R4R5",
+              "V_C4_R2R3",
+              "V_C4_R6R7",
+              "V_C4_R5R6",
+              "V_C4_R3R4",
+              "V_C2_R3R4",
+              "V_C2_R0R1",
+              "V_C2_R5R6",
+              "V_C4_R0R1",
+              "V_C2_R4R5",
+              "V_C2_R2R3",
+              "V_C4_R1R2",
+              "V_C2_R6R7",
+              "V_C2_R1R2",
+              "V_C1_R1R2",
+              "aqara_driver_1"
+            ]
+          description: ID of the Zigbee2MQTT device.
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Starting date and time for historical data.
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Ending date and time for historical data.
+      responses:
+        '200':
+          description: Successfully returned the latest/historical data of a Zigbee2MQTT device.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '404':
+          description: Unable to find a Zigbee2MQTT device that matches the given ID.
+        '500':
+          description: Internal server error.
+    post:
+      tags: ['Zigbee2MQTT']
+      description: Set the state of a device or group.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "top_lights_switch",
+              "tables",
+              "ambient_front",
+              "table_lights_switch",
+              "room_lights_switch",
+              "front_lights_switch",
+              "table_right",
+              "H_R2_C4C5",
+              "SP4",
+              "SP6",
+              "H_R2_C3C4_solid",
+              "SP1",
+              "SP7",
+              "H_R1_C1C2",
+              "H_R1_C2C3",
+              "H_R1_C3C4",
+              "H_R2_C3C4_focus",
+              "SP3",
+              "V_C3_R1R2",
+              "V_C5_R1R2",
+              "H_R2_C1C2",
+              "SP5",
+              "H_R1_C4C5",
+              "table_1",
+              "table_2",
+              "table_3",
+              "table_4",
+              "table_5",
+              "table_6",
+              "table_7",
+              "table_8",
+              "table_9",
+              "table_10",
+              "table_11",
+              "table_12",
+              "table_13",
+              "table_14",
+              "table_15",
+              "table_16",
+              "table_left",
+              "H_R2_C2C3_focus",
+              "V_C4_R4R5",
+              "V_C4_R2R3",
+              "V_C4_R6R7",
+              "V_C4_R5R6",
+              "V_C4_R3R4",
+              "V_C2_R3R4",
+              "V_C2_R0R1",
+              "V_C2_R5R6",
+              "V_C4_R0R1",
+              "V_C2_R4R5",
+              "V_C2_R2R3",
+              "V_C4_R1R2",
+              "V_C2_R6R7",
+              "V_C2_R1R2",
+              "V_C1_R1R2",
+              "aqara_driver_1"
+            ]
+          description: ID of the Zigbee2MQTT device or group.
+        - name: light_state
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "ON",
+              "OFF"
+            ]
+          description: The desired state of the Zigbee2MQTT light. Can be "ON" or "OFF".
+        - name: light_brightness
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 254
+          description: The desired brightness of the Zigbee2MQTT light. Can be any integer from 0 to 254.
+        - name: light_color_temperature
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 153
+            maximum: 500
+          description: The desired color temperature of the Zigbee2MQTT light. Can be any integer from 153 to 500.
+        - name: switch_state
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "ON",
+              "OFF",
+              "TOGGLE"
+            ]
+          description: The desired state of the Zigbee2MQTT switch. Can be "ON", "OFF", or "TOGGLE".
+        - name: blinds_state
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "OPEN",
+              "CLOSE",
+              "STOP"
+            ]
+          description: The desired state of the Zigbee2MQTT blinds controller. Can be "OPEN", "CLOSE", or "STOP".
+        - name: blinds_position
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+          description: The desired position of the Zigbee2MQTT blinds controller. Can be any integer from 0 to 100.
+      responses:
+        '200':
+          description: Successfully set the state of a device or group.
+        '400':
+          description: Invalid request.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '404':
+          description: Unable to find a device or group that matches the given ID.
+        '500':
+          description: Internal server error.
+  # SENSIBO AIR PRO
+  /sensibo:
+    get:
+      tags: ['Sensibo Air Pro']
+      description: Get the IDs of all Sensibo Air Pros.
+      responses:
+        '200':
+          description: Successfully returned the IDs of all Sensibo Air Pros.
+        '401':
+          description: Invalid API key.
+        '500':
+          description: Internal server error.
+  /sensibo/{id}:
+    get:
+      tags: ['Sensibo Air Pro']
+      description: Get the latest/historical data of a Sensibo Air Pro.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "climate.back_left_sensibo_air",
+              "climate.back_right_sensibo_air",
+              "climate.front_left_sensibo_air",
+              "climate.front_right_sensibo_air"
+            ]
+          description: ID of the Sensibo Air Pro.
+        - name: time_start
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Starting date and time for historical data.
+        - name: time_end
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            format: date-time
+          description: Ending date and time for historical data.
+      responses:
+        '200':
+          description: Successfully returned the latest/historical data of a Sensibo Air Pro.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '404':
+          description: Unable to find a Sensibo Air Pro that matches the given ID.
+        '500':
+          description: Internal server error.
+  /sensibo/{id}/hvac:
+    post:
+      tags: ['Sensibo Air Pro']
+      description: Set the state of a Sensibo Air Pro's HVAC.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "climate.back_left_sensibo_air",
+              "climate.back_right_sensibo_air",
+              "climate.front_left_sensibo_air",
+              "climate.front_right_sensibo_air"
+            ]
+          description: ID of the Sensibo Air Pro.
+        - name: hvac_mode
+          in: query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            enum: [
+              "off",
+              "heat",
+              "cool"
+            ]
+          description: The desired state of the Sensibo Air Pro's HVAC. Can be "off", "heat", or "cool".
+        - name: target_temperature
+          in: query
+          required: false
+          schema:
+            type: float
+            minimum: 10
+            maximum: 35
+          description: The desired target temperature of the Sensibo Air Pro's HVAC. Can be any value from 10 to 35.
+      responses:
+        '200':
+          description: Successfully set the state of a Sensibo Air Pro's HVAC.
+        '400':
+          description: Bad request.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '404':
+          description: Unable to find a Sensibo Air Pro that matches the given ID.
+        '500':
+          description: Internal server error.
+  # GROUPS
+  /groups:
+    get:
+      tags: ['Groups']
+      description: Get the IDs of all existing groups.
+      responses:
+        '200':
+          description: Successfully returned the IDs of all existing groups.
+        '401':
+          description: Invalid API key.
+        '404':
+          description: Unable to get the IDs of all existing groups.
+        '500':
+          description: Internal server error.
+    post:
+      tags: ['Groups']
+      description: Create a new group of devices.
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+          description: ID of the new group.
+        - name: apollo_air_1_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items: 
+              type: string
+              minLength: 1
+          description: IDs of the Apollo AIR-1's to be included in the new group.
+        - name: apollo_msr_2_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items: 
+              type: string
+              minLength: 1
+          description: IDs of the Apollo MSR-2's to be included in the new group.
+        - name: athom_smart_plug_v2_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items: 
+              type: string
+              minLength: 1
+          description: IDs of the Athom Smart Plug v2's to be included in the new group.
+        - name: zigbee2mqtt_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items: 
+              type: string
+              minLength: 1
+          description: IDs of the Zigbee2MQTT devices to be included in the new group.
+      responses:
+        '200':
+          description: Successfully created a new group of devices.
+        '400':
+          description: Invalid request.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '404':
+          description: Unable to find a group or device that matches the given ID.
+        '500':
+          description: Internal server error.
+    put:
+      tags: ['Groups']
+      description: Change the members of a group. Add an ID named [REMOVE MEMBERS] to remove all existing members of a device type.
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+          description: ID of the group to be edited.
+        - name: apollo_air_1_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items: 
+              type: string
+              minLength: 1
+          description: IDs of the Apollo AIR-1's to replace the existing members of the group.
+        - name: apollo_msr_2_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items: 
+              type: string
+              minLength: 1
+          description: IDs of the Apollo MSR-2's to replace the existing members of the group.
+        - name: athom_smart_plug_v2_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items: 
+              type: string
+              minLength: 1
+          description: IDs of the Athom Smart Plug v2's to replace the existing members of the group.
+        - name: zigbee2mqtt_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items: 
+              type: string
+              minLength: 1
+          description: IDs of the Zigbee2MQTT devices to replace the existing members of the group.
+      responses:
+        '200':
+          description: Successfully changed the members of a group.
+        '400':
+          description: Invalid request.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '404':
+          description: Unable to find a group or device that matches the given ID.
+        '500':
+          description: Internal server error.
+    delete:
+      tags: ['Groups']
+      description: Delete an existing group.
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+          description: ID of the group to be deleted.
+      responses:
+        '200':
+          description: Successfully deleted an existing group.
+        '401':
+          description: Invalid API key.
+        '403':
+          description: Unauthorized access to this endpoint.
+        '404':
+          description: Unable to find a group that matches the given ID.
+        '500':
+          description: Internal server error.
+  /groups/{id}:
+    get:
+      tags: ['Groups']
+      description: Get the latest data from all the devices in a specific group.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+          description: ID of the group to get data from.
+      responses:
+        '200':
+          description: Successfully returned the latest data from all devices in a specific group.
+        '401':
+          description: Invalid API key.
+        '404':
+          description: Unable to find specific group.
+        '500':
+          description: Internal server error.
+
+components:
+  securitySchemes:
+    ApiKeyAuth: # arbitrary name for the security scheme
+      type: apiKey
+      in: header # can be "header", "query" or "cookie"
+      name: X-API-KEY # name of the header, query parameter or cookie

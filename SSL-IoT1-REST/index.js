@@ -310,22 +310,21 @@ async function GET_avg(res, req, deviceName, api_key, type, uri){
         // Step 2: Return data based on parameter values
         if(!timeStart && !timeEnd && specData){
             // [A] If NO optional parameter values were given
-            const queryText = format(`SELECT average(time_weight('Linear', timestamp, $1)) as time_weighted_average FROM %I;`, `${deviceName.toLowerCase().replaceAll("-","_").replaceAll(" ","_")}_${deviceID.replaceAll(".","_")}`);
-            const queryValues = [specData];
+            const queryText = format(`SELECT average(time_weight('Linear', timestamp, %I)) as time_weighted_average FROM %I WHERE timestamp > NOW() - INTERVAL '1 day';`, `${specData}`, `${deviceName.toLowerCase().replaceAll("-","_").replaceAll(" ","_")}_${deviceID.replaceAll(".","_")}`);
 
-            client.query(queryText, queryValues, (err, data) => {
+            client.query(queryText, (err, data) => {
                 if(err || data.rowCount === 0){
-                    server_Log(`Internal Server Error: Unable to get historical ${specData} data from ${deviceName} with ID: ${deviceID}`);
-                    return res.status(500).send(`Internal Server Error: Unable to get historical ${specData} data from ${deviceName} with ID: ${deviceID}`);
+                    server_Log(`Internal Server Error: Unable to get average historical ${specData} data from ${deviceName} with ID: ${deviceID}`);
+                    return res.status(500).send(`Internal Server Error: Unable to get average historical ${specData} data from ${deviceName} with ID: ${deviceID}`);
                 }
-                server_Log(`Successfully returned historical ${specData} data from ${deviceName} with ID: ${deviceID}`);
+                server_Log(`Successfully returned average historical ${specData} data (last 24 hours) from ${deviceName} with ID: ${deviceID}`);
                 UPDATE_transactions(api_key, type, uri, true);
                 res.json(data.rows[0]);
             })
         }else if(timeStart && timeEnd && specData){
             // [B] If optional parameter values for timeStart and timeEnd were given
-            const queryText = format(`SELECT average(time_weight('Linear', timestamp, $1)) as time_weighted_average FROM %I WHERE timestamp BETWEEN $2 AND $3;`, `${deviceName.toLowerCase().replaceAll("-","_").replaceAll(" ","_")}_${deviceID}`);
-            const queryValues = [specData, timeStart, timeEnd];
+            const queryText = format(`SELECT average(time_weight('Linear', timestamp, %I)) as time_weighted_average FROM %I WHERE timestamp BETWEEN $1 AND $2;`, `${specData}`, `${deviceName.toLowerCase().replaceAll("-","_").replaceAll(" ","_")}_${deviceID}`);
+            const queryValues = [timeStart, timeEnd];
 
             client.query(queryText, queryValues, (err, data) => {
                 if(err || data.rowCount === 0){
