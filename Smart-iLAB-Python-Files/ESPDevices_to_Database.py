@@ -18,71 +18,10 @@ load_dotenv()
 # MQTT Connection Setup
 BROKER_IP = os.getenv('MQTT_IP').replace("mqtt://", "")
 BROKER_PORT = int(os.getenv('MQTT_PORT'))
-TOPIC = ["apollo_air_1_87b074/data", 
-"apollo_air_1_88e4c8/data", 
-"apollo_air_1_88e590/data", 
-"apollo_air_1_89e8d8/data", 
-"apollo_msr_2_2b7624/data", 
-"apollo_msr_2_87a5f4/data", 
-"apollo_msr_2_c07ce8/data", 
-"apollo_msr_2_cc0b5c/data", 
-"athom_smart_plug_v2_9d86aa/data", 
-"athom_smart_plug_v2_9d86e0/data", 
-"athom_smart_plug_v2_9d93d2/data", 
-"athom_smart_plug_v2_9d923d/data", 
-"athom_smart_plug_v2_9d929b/data", 
-"athom_smart_plug_v2_9d8665/data", 
-"athom_smart_plug_v2_9d9293/data", 
-"athom_smart_plug_v2_9d9572/data",
-"apollo_air_1_889720/data", 
-"apollo_air_1_87f510/data", 
-"apollo_air_1_2da640/data", 
-"apollo_air_1_89ea14/data", 
-"apollo_msr_2_89f464/data", 
-"apollo_msr_2_87a5dc/data", 
-"apollo_msr_2_1ee998/data", 
-"apollo_msr_2_87a5ec/data", 
-"athom_smart_plug_v2_9d88e7/data", 
-"athom_smart_plug_v2_9d924e/data", 
-"athom_smart_plug_v2_9d929e/data", 
-"athom_smart_plug_v2_9d9265/data", 
-"athom_smart_plug_v2_9d9421/data", 
-"athom_smart_plug_v2_9d8877/data", 
-"athom_smart_plug_v2_9d89d4/data", 
-"athom_smart_plug_v2_9d8a03/data",
-"apollo_air_1_889b88/data", 
-"apollo_air_1_889938/data", 
-"apollo_air_1_88e85c/data", 
-"apollo_air_1_89e548/data", 
-"apollo_msr_2_1ef110/data", 
-"apollo_msr_2_87a298/data", 
-"apollo_msr_2_89304c/data", 
-"apollo_msr_2_88edc8/data", 
-"athom_smart_plug_v2_9d92a3/data", 
-"athom_smart_plug_v2_9d88e6/data", 
-"athom_smart_plug_v2_9d8718/data", 
-"athom_smart_plug_v2_9cda9a/data", 
-"athom_smart_plug_v2_9d3535/data", 
-"athom_smart_plug_v2_9d90b9/data", 
-"athom_smart_plug_v2_9d90c3/data", 
-"athom_smart_plug_v2_9d94a6/data",
-"apollo_air_1_88970c/data", 
-"apollo_air_1_2deb24/data", 
-"apollo_air_1_89e5f0/data", 
-"apollo_air_1_cc8f24/data", 
-"apollo_msr_2_cd7014/data", 
-"apollo_msr_2_c660fc/data", 
-"apollo_msr_2_c8f5b4/data", 
-"apollo_msr_2_c7b650/data", 
-"athom_smart_plug_v2_9d97ec/data", 
-"athom_smart_plug_v2_9d8671/data", 
-"athom_smart_plug_v2_9d927c/data", 
-"athom_smart_plug_v2_9d356f/data", 
-"athom_smart_plug_v2_9d88c5/data", 
-"athom_smart_plug_v2_9d887f/data", 
-"athom_smart_plug_v2_9cdee5/data", 
-"athom_smart_plug_v2_9d893e/data",
-"airgradient_one_6f31cc/data"]
+TOPIC = ["apollo_air_1", 
+"apollo_msr_2", 
+"athom_smart_plug_v2", 
+"airgradient_one"]
 CLIENT_ID = f'Subscriber1'
 # Optional depending on Broker Security level
 USERNAME = os.getenv('MQTT_USERNAME')
@@ -106,7 +45,108 @@ def on_connect(client, userdata, flags, rc):
         print("Connected to MQTT Broker!")
         # Subscribed to all listed topics
         for i in TOPIC:
-            client.subscribe(i)
+            
+            cur.execute(f"SELECT id FROM {i};")
+            ids = cur.fetchall()
+
+            for id in ids:
+                
+                if id:  # if the database table for the device/s listed in TOPIC contains values, create the respective table/s for the device if it doesn't exist yet
+
+                    fid = str(id).replace("(", "").replace("'", "").replace(")", "").replace(",", "")
+                    if i == "apollo_air_1":
+
+                        cur.execute(f"""CREATE TABLE IF NOT EXISTS {i}_{fid}(
+                            timestamp timestamp with time zone NOT NULL,
+                            co2 integer,
+                            pressure double precision,
+                            temperature double precision,
+                            humidity double precision,
+                            nox integer,
+                            voc integer,
+                            voc_quality text,
+                            pm_1_0 double precision,
+                            pm_2_5 double precision,
+                            pm_4_0 double precision,
+                            state boolean,
+                            r integer,
+                            g integer,
+                            b integer,
+                            brightness double precision,
+                            pm_10_0 double precision
+                            );""")
+
+                    elif i == "apollo_msr_2":
+
+                        cur.execute(f"""CREATE TABLE IF NOT EXISTS {i}_{fid}(
+                            timestamp timestamp with time zone NOT NULL,
+                            co2 integer,
+                            pressure double precision,
+                            temperature double precision,
+                            light double precision,
+                            uv_index double precision,
+                            detection_distance double precision,
+                            moving_distance double precision,
+                            still_distance double precision,
+                            zone_1_occupancy text,
+                            zone_2_occupancy text,
+                            zone_3_occupancy text,
+                            detection_target text,
+                            moving_target text,
+                            still_target text,
+                            state boolean,
+                            r double precision,
+                            g double precision,
+                            b double precision,
+                            brightness double precision,
+                            buzzer_state boolean
+                            );""")
+
+                    elif i == "athom_smart_plug_v2":
+                        
+                        cur.execute(f"""CREATE TABLE IF NOT EXISTS {i}_{fid}(
+                            timestamp timestamp with time zone NOT NULL,
+                            current double precision,
+                            energy double precision,
+                            power double precision,
+                            total_daily_energy double precision,
+                            total_energy double precision,
+                            voltage double precision,
+                            relay_state boolean
+                            );""")
+
+                    elif i == "airgradient_one":
+                        
+                        cur.execute(f"""CREATE TABLE IF NOT EXISTS {i}_{fid}(
+                            timestamp timestamp with time zone NOT NULL,
+                            co2 integer,
+                            temperature double precision,
+                            humidity double precision,
+                            nox integer,
+                            voc integer,
+                            pm_0_3 double precision,
+                            pm_1_0 double precision,
+                            pm_2_5 double precision,
+                            pm_10_0 double precision,
+                            state boolean,
+                            r integer,
+                            g integer,
+                            b integer,
+                            brightness double precision
+                            );""")
+
+                    else:
+
+                        print(f"Device Type {i} does not exist")
+                        
+                    # After creating tables for each device, if not existing already, subscribe to the device topics
+                    client.subscribe(f"{i}_{fid}/data")
+                
+                else:
+                
+                    print(f"No existing {i} devices listed in the database")
+
+
     else:
         print(f'Failed to connect, return code {rc}')
 
@@ -153,7 +193,7 @@ def on_message(client, userdata, msg):
         ### cur.execute(f"INSERT INTO devices ({zeus.replace("-", "_")}) VALUES ('{json.dumps(oner, indent = 4)}')")
         # Convert the dictionary into a JSON file and store to the DB
 
-        # Could be used for {device}_{id}:timestamp/{option1}/{option2}/{option3}
+        # Could be used for {device}_{fid}:timestamp/{option1}/{option2}/{option3}
         # Where each dictionary key is the same name as the DB column, store the corresponding dictionary value to the key column
         cur.execute(f"INSERT INTO {table_name} ({str(columns).replace("'", "").replace("[", "").replace("]", "")}) VALUES ({str(values).replace("[", "").replace("]", "")})")
         # Where each dictionary key is the same name as the DB column, store the corresponding dictionary value to the key column
@@ -164,11 +204,25 @@ def on_message(client, userdata, msg):
 
     except Exception as err:
 
-        cur.execute(f"INSERT INTO error_logs ({table_name}) VALUES ('{str(msg.payload.decode("utf-8"))}')")
+        try:
+            
+            try:
+    
+                cur.execute(f"INSERT INTO error_logs ({table_name}) VALUES ('{str(msg.payload.decode("utf-8"))}')")
+    
+            except:
+    
+                cur.execute(f"ALTER error_logs ADD COLUMN {table_name} text")
+                cur.execute(f"INSERT INTO error_logs ({table_name}) VALUES ('{str(msg.payload.decode("utf-8"))}')")
+    
+            # log error packet
+            print("[{timestamp}]  Topic: {topic:<35}  |  Data: {data}".format(timestamp=datetime.datetime.now(pytz.timezone(timezone)).strftime("%Y-%m-%d %X%z"), topic="error_logs", data=str(msg.payload.decode("utf-8"))))
+            return
+            
+        except:
 
-        # log error packet
-        print("[{timestamp}]  Topic: {topic:<35}  |  Data: {data}".format(timestamp=datetime.datetime.now(pytz.timezone(timezone)).strftime("%Y-%m-%d %X%z"), topic="error_logs", data=str(msg.payload.decode("utf-8"))))
-        return
+            print(f"[{datetime.datetime.now(pytz.timezone(timezone)).strftime("%Y-%m-%d %X%z")}] Unreadable message payload from {table_name}")
+            return
 
 
 # Establish Broker Connection
