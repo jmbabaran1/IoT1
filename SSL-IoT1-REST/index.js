@@ -1176,7 +1176,7 @@ app.post("/sensibo/:id/hvac", async (req, res) => {
                 return res.status(404).json({error: `Bad Request: Invalid 'hvac_mode' parameter in POST request for Sensibo with ID: ${deviceID} | Given value: ${hvacMode} | Possible values: "off", "heat", "cool"`});
             }
             let parameters = {"entity_id": deviceID, "hvac_mode": hvacMode};
-            await fetch(`${process.env.HOME_ASSISTANT_URL}:${process.env.HOME_ASSISTANT_PORT}/api/services/climate/set_hvac_mode`, {method: 'POST', body: JSON.stringify(parameters), headers: {"Authorization":`${process.env.HOME_ASSISTANT_HEADERS}`, "content-type":"application/json"}})
+            await fetch(`${process.env.HOME_ASSISTANT_URL}:${process.env.HOME_ASSISTANT_PORT}/api/services/climate/set_hvac_mode`, {method: 'POST', body: JSON.stringify(parameters), headers: {"Authorization":`Bearer ${process.env.HOME_ASSISTANT_TOKEN}`, "content-type":"application/json"}})
         }
         if(targetTemperature){
             if(targetTemperature < 10 || targetTemperature > 35){
@@ -1185,7 +1185,7 @@ app.post("/sensibo/:id/hvac", async (req, res) => {
                 return res.status(404).json({error: `Bad Request: Invalid 'target_temperature' parameter in POST request for Sensibo with ID: ${deviceID} | Given value: ${targetTemperature} | Possible values: any value from 10 to 35`});
             }
             let parameters = {"entity_id": deviceID, "temperature": targetTemperature};
-            await fetch(`${process.env.HOME_ASSISTANT_URL}:${process.env.HOME_ASSISTANT_PORT}/api/services/climate/set_temperature`, {method: 'POST', body: JSON.stringify(parameters), headers: {"Authorization":`${process.env.HOME_ASSISTANT_HEADERS}`, "content-type":"application/json"}});
+            await fetch(`${process.env.HOME_ASSISTANT_URL}:${process.env.HOME_ASSISTANT_PORT}/api/services/climate/set_temperature`, {method: 'POST', body: JSON.stringify(parameters), headers: {"Authorization":`Bearer ${process.env.HOME_ASSISTANT_TOKEN}`, "content-type":"application/json"}});
         }
 
         // Step 4: Return status 200 OK
